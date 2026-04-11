@@ -819,19 +819,17 @@
     }
 
     // Render projects as simple list
-    function renderProjects() {
+    async function renderProjects() {
       const list = document.getElementById('projects-list');
 
+      // Render initial list
       list.innerHTML = allProjects.map((repo, index) => `
-        <a href="project.html?name=${repo.name}" class="project-item group flex items-center justify-between py-3 px-4 -mx-4 rounded-lg hover:bg-sage-500/5 transition-colors">
-          <div class="flex items-center gap-4 min-w-0">
+        <a href="project.html?name=${repo.name}" class="project-item group flex items-center justify-between py-3 px-4 -mx-4 rounded-lg hover:bg-sage-500/5 transition-colors" data-repo="${repo.name}">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
             <span class="text-slate-800 group-hover:text-sage-600 transition-colors truncate">${repo.name}</span>
-            ${repo.language ? `
-              <div class="hidden sm:flex items-center gap-1.5 shrink-0">
-                <span class="lang-dot" style="background: ${langColors[repo.language] || langColors.null}"></span>
-                <span class="text-xs text-slate-400">${repo.language}</span>
-              </div>
-            ` : ''}
+            <div class="hidden sm:flex items-center gap-2 shrink-0 languages-container" data-repo="${repo.name}">
+              <span class="text-xs text-slate-300">loading...</span>
+            </div>
           </div>
           <div class="flex items-center gap-3 shrink-0">
             ${repo.stargazers_count > 0 ? `
@@ -863,6 +861,30 @@
           ease: 'power2.out'
         }
       );
+
+      // Fetch languages for each repo in background
+      for (const repo of allProjects) {
+        try {
+          const langResponse = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/languages`);
+          const languages = await langResponse.json();
+          const langNames = Object.keys(languages).slice(0, 3); // Top 3 languages
+
+          const container = document.querySelector(`.languages-container[data-repo="${repo.name}"]`);
+          if (container && langNames.length > 0) {
+            container.innerHTML = langNames.map(lang => `
+              <div class="flex items-center gap-1">
+                <span class="lang-dot" style="background: ${langColors[lang] || langColors.null}"></span>
+                <span class="text-xs text-slate-400">${lang}</span>
+              </div>
+            `).join('');
+          } else if (container) {
+            container.innerHTML = '';
+          }
+        } catch (e) {
+          const container = document.querySelector(`.languages-container[data-repo="${repo.name}"]`);
+          if (container) container.innerHTML = '';
+        }
+      }
     }
 
     
