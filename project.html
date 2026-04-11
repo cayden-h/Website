@@ -299,17 +299,15 @@
         // Fetch languages
         const langRes = await fetch(repo.languages_url);
         const languages = await langRes.json();
-        const langTotal = Object.values(languages).reduce((a, b) => a + b, 0);
 
         if (Object.keys(languages).length > 0) {
           document.getElementById('project-description').innerHTML = `
             <h2 class="text-xs font-medium text-slate-400 tracking-widest uppercase mb-4">Technologies</h2>
             <div class="flex flex-wrap gap-2">
-              ${Object.entries(languages).map(([lang, bytes]) => `
+              ${Object.keys(languages).map(lang => `
                 <span class="tech-tag">
                   <span class="lang-dot mr-2" style="background: ${langColors[lang] || langColors.null}"></span>
                   ${lang}
-                  <span class="ml-2 text-slate-400">${((bytes / langTotal) * 100).toFixed(1)}%</span>
                 </span>
               `).join('')}
             </div>

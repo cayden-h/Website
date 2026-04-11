@@ -819,33 +819,45 @@
     }
 
     // Render projects as simple list
-    async function renderProjects() {
+    function renderProjects() {
       const list = document.getElementById('projects-list');
 
-      // Render initial list
-      list.innerHTML = allProjects.map((repo, index) => `
-        <a href="project.html?name=${repo.name}" class="project-item group flex items-center justify-between py-3 px-4 -mx-4 rounded-lg hover:bg-sage-500/5 transition-colors" data-repo="${repo.name}">
-          <div class="flex items-center gap-3 min-w-0 flex-1">
-            <span class="text-slate-800 group-hover:text-sage-600 transition-colors truncate">${repo.name}</span>
-            <div class="hidden sm:flex items-center gap-2 shrink-0 languages-container" data-repo="${repo.name}">
-              <span class="text-xs text-slate-300">loading...</span>
+      list.innerHTML = allProjects.map((repo, index) => {
+        // Show Python + primary language
+        const languages = ['Python'];
+        if (repo.language && repo.language !== 'Python') {
+          languages.push(repo.language);
+        }
+
+        return `
+          <a href="project.html?name=${repo.name}" class="project-item group flex items-center justify-between py-3 px-4 -mx-4 rounded-lg hover:bg-sage-500/5 transition-colors">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <span class="text-slate-800 group-hover:text-sage-600 transition-colors truncate">${repo.name}</span>
+              <div class="hidden sm:flex items-center gap-2 shrink-0">
+                ${languages.map(lang => `
+                  <div class="flex items-center gap-1">
+                    <span class="lang-dot" style="background: ${langColors[lang] || langColors.null}"></span>
+                    <span class="text-xs text-slate-400">${lang}</span>
+                  </div>
+                `).join('')}
+              </div>
             </div>
-          </div>
-          <div class="flex items-center gap-3 shrink-0">
-            ${repo.stargazers_count > 0 ? `
-              <span class="flex items-center gap-1 text-xs text-slate-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-                ${repo.stargazers_count}
-              </span>
-            ` : ''}
-            <svg class="w-4 h-4 text-slate-300 group-hover:text-sage-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </a>
-      `).join('');
+            <div class="flex items-center gap-3 shrink-0">
+              ${repo.stargazers_count > 0 ? `
+                <span class="flex items-center gap-1 text-xs text-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  ${repo.stargazers_count}
+                </span>
+              ` : ''}
+              <svg class="w-4 h-4 text-slate-300 group-hover:text-sage-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+        `;
+      }).join('');
 
       // Store project data for page generation
       window.projectsData = allProjects;
@@ -861,30 +873,6 @@
           ease: 'power2.out'
         }
       );
-
-      // Fetch languages for each repo in background
-      for (const repo of allProjects) {
-        try {
-          const langResponse = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/languages`);
-          const languages = await langResponse.json();
-          const langNames = Object.keys(languages).slice(0, 3); // Top 3 languages
-
-          const container = document.querySelector(`.languages-container[data-repo="${repo.name}"]`);
-          if (container && langNames.length > 0) {
-            container.innerHTML = langNames.map(lang => `
-              <div class="flex items-center gap-1">
-                <span class="lang-dot" style="background: ${langColors[lang] || langColors.null}"></span>
-                <span class="text-xs text-slate-400">${lang}</span>
-              </div>
-            `).join('');
-          } else if (container) {
-            container.innerHTML = '';
-          }
-        } catch (e) {
-          const container = document.querySelector(`.languages-container[data-repo="${repo.name}"]`);
-          if (container) container.innerHTML = '';
-        }
-      }
     }
 
     
