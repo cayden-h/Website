@@ -186,6 +186,7 @@
     }
 
     .type-hackathon { border-left: 3px solid #588157; }
+    .type-datathon { border-left: 3px solid #6366f1; }
     .type-conference { border-left: 3px solid #64748b; }
     .type-workshop { border-left: 3px solid #a3b18a; }
 
@@ -248,15 +249,34 @@
   </div>
 
   <script>
-    // Event data - customize with your events
+    // Event data
     const events = {
+      smudatafest2026: {
+        title: 'ASA DataFest',
+        type: 'datathon',
+        date: 'April 11-13, 2026',
+        location: 'Southern Methodist University, Dallas',
+        status: '4th Place',
+        description: 'Competed in a 48-hour datathon at SMU, analyzing datasets with over 10 million rows. One of my first datathons, working with complex real-world data I had never encountered before.',
+        highlights: [
+          'Placed 4th overall in our room',
+          'Analyzed datasets with 10M+ rows',
+          'First datathon experience'
+        ],
+        techStack: ['Python', 'Data Analysis', 'Statistics'],
+        teammates: ['Ezekiel Galvez', 'Eli McConnell', 'Maria Pitts', 'Vian Chen'],
+        links: {
+          devpost: null,
+          github: null,
+          website: null
+        }
+      },
       redbull2025: {
         title: 'Red Bull Basement',
         type: 'hackathon',
         date: 'May 7-9, 2025',
         location: 'Detroit, Michigan',
         status: 'National Finalist',
-        image: null,
         description: 'Selected as a National Finalist for the Red Bull Basement global innovation competition. Competing against teams from across the country to solve real-world problems through technology.',
         highlights: [
           'National Finalist out of hundreds of applicants',
@@ -264,49 +284,100 @@
           'Networked with entrepreneurs and industry leaders'
         ],
         techStack: ['Python', 'React', 'AI/ML'],
+        teammates: [],
         links: {
           devpost: null,
           github: null,
           website: 'https://www.redbull.com/us-en/event-series/red-bull-basement'
         }
       },
-      // Add more events here
-      hackutd2024: {
-        title: 'HackUTD',
+      rowdyhacks2025: {
+        title: 'RowdyHacks X',
         type: 'hackathon',
-        date: 'November 2024',
-        location: 'Dallas, Texas',
-        status: 'Participant',
-        image: null,
-        description: 'Participated in one of the largest hackathons in Texas, building innovative solutions over 24 hours.',
+        date: 'February 22-23, 2025',
+        location: 'UTSA, San Antonio',
+        status: '1st Place - Best Cyber Hack',
+        description: 'At my very first hackathon, we took home 1st place in the Best Cyber Hack category. We created Cyber Net, an AI-powered offensive security orchestrator that scores network vulnerabilities by exploitation risk using MITRE ATT&CK, EPSS, CVSS, and KEV, then automatically builds multi-step attack playbooks with runnable shell commands.',
         highlights: [
-          'Built a full-stack application in 24 hours',
-          'Collaborated with a team of 4 developers',
-          'Presented project to industry judges'
+          '1st Place Best Cyber Hack out of 95+ teams',
+          '400 hackers competed over 24 hours',
+          'Built AI-powered security orchestrator',
+          'Cowboy Bebop themed UI design',
+          'First hackathon ever'
         ],
-        techStack: ['Next.js', 'Python', 'OpenAI API'],
+        techStack: ['React', 'TypeScript', 'Tailwind', 'Node.js', 'Google AI', 'Grok', 'SQL', 'MITRE ATT&CK', 'Docker', 'Vercel'],
+        teammates: ['Minh Le', 'Brendan DeFillippo', 'Nolan Chatten'],
         links: {
-          devpost: null,
+          devpost: 'https://devpost.com/software/cyber-net',
+          github: null,
+          youtube: 'https://www.youtube.com/watch?v=cyber-net-demo',
+          website: null
+        }
+      },
+      tidalhack2025: {
+        title: 'TidalHack',
+        type: 'hackathon',
+        date: 'March 22-23, 2025',
+        location: 'Texas A&M University',
+        status: 'Participant',
+        description: 'Built Pipely, an AI-assisted pipeline integrity platform designed to align inline inspection (ILI) data across multiple inspection runs, enabling engineers to detect growing defects before they become failures (costing ~$500M+). Pipely solves the alignment problem by matching anomalies across years, tracking corrosion growth, and providing standards-based integrity insights.',
+        highlights: [
+          'Built AI pipeline integrity platform',
+          'Self-supervised learning with XGBoost',
+          'DBScan clustering and Bayesian regression',
+          'RAG for ASME/API standard compliance',
+          'Hardest hackathon yet'
+        ],
+        techStack: ['React', 'TypeScript', 'GSAP', 'Python', 'Node.js', 'MongoDB', 'Google Gemini', 'XGBoost', 'ML'],
+        teammates: ['Tri Nguyen'],
+        links: {
+          devpost: 'https://devpost.com/software/pipely',
           github: null,
           website: null
         }
       },
-      tamuhack2024: {
-        title: 'TAMUhack',
+      hackai2025: {
+        title: 'HackAI',
         type: 'hackathon',
-        date: 'January 2024',
-        location: 'College Station, Texas',
+        date: 'April 19-20, 2025',
+        location: 'UT Dallas',
         status: 'Participant',
-        image: null,
-        description: 'Competed at Texas A&M\'s annual hackathon, focusing on building impactful technology solutions.',
+        description: 'Built Vision, an AI-powered land feasibility intelligence platform that lets you go from floor plan to full financial analysis in minutes. Drop a pin on a map and Vision pulls zoning context, computes constraints, auto-generates floor plans, and provides feasibility scores with ARV, cost per SF, and market trends.',
         highlights: [
-          'Developed project from concept to demo',
-          'Learned new technologies under time pressure',
-          'Connected with sponsors and mentors'
+          'Full-stack land feasibility platform',
+          'Zoning analysis across 10 Dallas district templates',
+          'Gradient boosting model trained on Redfin comps',
+          'Structural beam analysis per AISC 360-16',
+          'Monte Carlo simulation for risk analysis',
+          'Most technically ambitious project'
         ],
-        techStack: ['React', 'Node.js', 'MongoDB'],
+        techStack: ['React 18', 'TypeScript', 'Three.js', 'Leaflet', 'Clerk', 'FastAPI', 'Python', 'Node.js', 'PostgreSQL', 'MongoDB', 'Gradient Boosting', 'KMeans', 'Gemini Pro'],
+        teammates: ['Eric Lee', 'Tri Nguyen'],
         links: {
-          devpost: null,
+          devpost: 'https://devpost.com/software/vision-land',
+          github: 'https://github.com/vision-land',
+          demo: 'https://vision-demo.vercel.app',
+          website: null
+        }
+      },
+      hackutd2024: {
+        title: 'HackUTD XI',
+        type: 'hackathon',
+        date: 'November 16-17, 2024',
+        location: 'UT Dallas, Richardson',
+        status: 'Participant',
+        description: 'Built Sync, an adaptive AI that combines T-Mobile\'s data, sentiment, and network health to help engineers act proactively instead of reactively. It monitors live reviews, network metrics, and API feeds, detects anomalies, predicts issues, and simulates the best repair plan before anyone notices a problem.',
+        highlights: [
+          'Multi-agent reasoning with NVIDIA Nemotron',
+          'Real-time churn signals and sentiment analysis',
+          'Interactive network heatmap with Leaflet',
+          'T-Mobile sentiment + NVIDIA reasoning challenge',
+          'Largest 24-hour hackathon in North America'
+        ],
+        techStack: ['React', 'TypeScript', 'Tailwind', 'Node.js', 'SQL', 'Supabase', 'Docker', 'NVIDIA Nemotron', 'Google AI'],
+        teammates: ['Anudeep Bonagiri'],
+        links: {
+          devpost: 'https://devpost.com/software/sync-network',
           github: null,
           website: null
         }
@@ -391,7 +462,16 @@
           </div>
         ` : ''}
 
-        ${(event.links.devpost || event.links.github || event.links.website) ? `
+        ${event.teammates && event.teammates.length > 0 ? `
+          <div class="mb-6">
+            <h3 class="text-sm font-medium text-slate-900 mb-3">Teammates</h3>
+            <div class="flex flex-wrap gap-2">
+              ${event.teammates.map(mate => `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sage-500/10 text-sage-700 text-sm rounded-full"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>${mate}</span>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${(event.links.devpost || event.links.github || event.links.website || event.links.demo || event.links.youtube) ? `
           <div class="pt-4 border-t border-sand/60">
             <h3 class="text-sm font-medium text-slate-900 mb-3">Links</h3>
             <div class="flex flex-wrap gap-3">
@@ -405,6 +485,18 @@
                 <a href="${event.links.github}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-800 transition-colors">
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
                   GitHub
+                </a>
+              ` : ''}
+              ${event.links.demo ? `
+                <a href="${event.links.demo}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-sage-600 text-white text-sm rounded-lg hover:bg-sage-700 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Demo
+                </a>
+              ` : ''}
+              ${event.links.youtube ? `
+                <a href="${event.links.youtube}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  YouTube
                 </a>
               ` : ''}
               ${event.links.website ? `
