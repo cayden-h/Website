@@ -884,6 +884,21 @@
         });
       });
 
+      // Award cards
+      gsap.utils.toArray('.award-card').forEach((card, i) => {
+        gsap.from(card, {
+          opacity: 0,
+          y: 20,
+          duration: 0.5,
+          ease: 'power2.out',
+          delay: i * 0.1,
+          scrollTrigger: {
+            trigger: '#awards',
+            start: 'top 85%'
+          }
+        });
+      });
+
       // Contact section
       gsap.from('.contact-content', {
         opacity: 0,
