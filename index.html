@@ -276,14 +276,6 @@
       color: #475569;
     }
 
-    /* Award cards */
-    .award-card {
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-    .award-card:hover {
-      transform: translateY(-2px);
-    }
-
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -383,55 +375,6 @@
     <div class="max-w-4xl mx-auto text-center">
       <h2 class="text-xs font-medium text-slate-400 tracking-widest uppercase mb-8 section-title">Publications</h2>
       <p class="text-slate-400 font-light text-sm italic">coming soon...</p>
-    </div>
-  </section>
-
-  <!-- Awards -->
-  <section id="awards" class="py-16 px-6 bg-white/40">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-xs font-medium text-slate-400 tracking-widest uppercase mb-10 text-center section-title">Awards & Honors</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- National Finalist -->
-        <div class="award-card bg-white border border-sand rounded-xl p-6 hover:border-sage-400 transition-colors cursor-pointer" data-award="redbull">
-          <div class="flex items-start justify-between mb-3">
-            <span class="text-xs font-medium text-sage-500 uppercase tracking-wider">National Finalist</span>
-            <span class="text-xs text-slate-400">May 2026</span>
-          </div>
-          <h3 class="text-lg font-medium text-slate-900 mb-1">Red Bull Basement Competition</h3>
-          <p class="text-sm text-slate-500 font-light">Selected as 1 of 65 teams in the USA (0.4% acceptance). Finals in Detroit, Michigan.</p>
-        </div>
-
-        <!-- Dell Competition -->
-        <div class="award-card bg-white border border-sand rounded-xl p-6 hover:border-sage-400 transition-colors cursor-pointer" data-award="dell">
-          <div class="flex items-start justify-between mb-3">
-            <span class="text-xs font-medium text-sage-500 uppercase tracking-wider">2nd Place</span>
-            <span class="text-xs text-slate-400">2025</span>
-          </div>
-          <h3 class="text-lg font-medium text-slate-900 mb-1">Dell Case Competition</h3>
-          <p class="text-sm text-slate-500 font-light">$1,500 prize. Selected as 1 of 51 students from 325+ applicants.</p>
-        </div>
-
-        <!-- President's List -->
-        <div class="award-card bg-white border border-sand rounded-xl p-6 hover:border-sage-400 transition-colors cursor-pointer" data-award="presidents">
-          <div class="flex items-start justify-between mb-3">
-            <span class="text-xs font-medium text-sage-500 uppercase tracking-wider">Academic</span>
-            <span class="text-xs text-slate-400">Fall 2025</span>
-          </div>
-          <h3 class="text-lg font-medium text-slate-900 mb-1">President's List</h3>
-          <p class="text-sm text-slate-500 font-light">Achieved 4.0 GPA. University of Texas San Antonio.</p>
-        </div>
-
-        <!-- Experiential Learning -->
-        <div class="award-card bg-white border border-sand rounded-xl p-6 hover:border-sage-400 transition-colors cursor-pointer" data-award="experiential">
-          <div class="flex items-start justify-between mb-3">
-            <span class="text-xs font-medium text-sage-500 uppercase tracking-wider">3x Recipient</span>
-            <span class="text-xs text-slate-400">2025 - 2026</span>
-          </div>
-          <h3 class="text-lg font-medium text-slate-900 mb-1">Experiential Learning Award</h3>
-          <p class="text-sm text-slate-500 font-light">Scholarship recognizing hands-on learning and research contributions.</p>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -573,79 +516,7 @@
       }
     };
 
-    // Awards data
-    const awardsData = {
-      redbull: {
-        title: 'Red Bull Basement Competition',
-        badge: 'National Finalist',
-        date: 'May 7-9, 2026',
-        location: 'Detroit, Michigan',
-        description: 'Red Bull Basement is a global student innovation competition that challenges students to use technology to solve problems in their communities.',
-        facts: [
-          'Selected as 1 of 65 teams in the USA',
-          '0.4% acceptance rate from all applicants',
-          'Project: Vision - AI-powered land analysis platform',
-          'Built with React, Three.js, Python, FastAPI',
-          'Competing against top university teams nationwide'
-        ],
-        links: [
-          { label: 'Red Bull Basement', url: 'https://www.redbull.com/us-en/event-series/red-bull-basement' },
-          { label: 'Vision Project', url: 'https://github.com/ExzellTv/Vision' }
-        ]
-      },
-      dell: {
-        title: 'Dell Case Competition',
-        badge: '2nd Place - $1,500',
-        date: 'February 2025',
-        location: 'Remote',
-        description: 'Dell Technologies Excel with Dell program focused on AI, mentorship, and applied learning through real-world data challenges.',
-        facts: [
-          'Selected as 1 of 51 students from 325+ applicants',
-          'Engineered data solutions with 4,000+ lines of code',
-          'Preprocessing and cleaning across 150 products',
-          'Competed against top CS students nationwide',
-          'Focused on AI and data engineering solutions'
-        ],
-        links: [
-          { label: 'Dell Technologies', url: 'https://www.dell.com' }
-        ]
-      },
-      presidents: {
-        title: "President's List",
-        badge: 'Academic Excellence',
-        date: 'Fall 2025',
-        location: 'UT San Antonio',
-        description: "The President's List recognizes students who achieve a perfect 4.0 GPA while enrolled full-time.",
-        facts: [
-          'Achieved 4.0 GPA',
-          'Full-time student in Computer Science & Mathematics',
-          'Honors College member',
-          'Data Science specialization',
-          'Balancing research, internships, and coursework'
-        ],
-        links: [
-          { label: 'UTSA Honors College', url: 'https://www.utsa.edu/honors/' }
-        ]
-      },
-      experiential: {
-        title: 'Experiential Learning Award',
-        badge: '3x Recipient',
-        date: '2025 - 2026',
-        location: 'UT San Antonio',
-        description: 'Scholarship awarded to students demonstrating exceptional hands-on learning, research contributions, and real-world application of skills.',
-        facts: [
-          'Received award 3 times for continued excellence',
-          'Recognition for AI/ML research contributions',
-          'Applied learning through multiple internships',
-          'Research at MD Anderson Cancer Center',
-          'Software engineering at Better Futures Institute'
-        ],
-        links: [
-          { label: 'UTSA', url: 'https://www.utsa.edu' }
-        ]
-      }
-    };
-
+    
     // Modal functions
     function openModal(experienceId) {
       const data = experienceData[experienceId];
@@ -713,67 +584,6 @@
           document.body.style.overflow = '';
         }
       });
-    }
-
-    function openAwardModal(awardId) {
-      const data = awardsData[awardId];
-      if (!data) return;
-
-      const content = document.getElementById('modal-content');
-      content.innerHTML = `
-        <div class="mb-1">
-          <span class="inline-block px-3 py-1 bg-sage-500/10 text-sage-600 text-xs font-medium rounded-full">${data.badge}</span>
-        </div>
-        <h3 class="text-2xl font-medium text-slate-900 mt-3 mb-1">${data.title}</h3>
-        <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
-          <span>${data.date}</span>
-          <span class="text-slate-300">•</span>
-          <span>${data.location}</span>
-        </div>
-
-        <div class="mb-6">
-          <p class="text-sm text-slate-600 leading-relaxed">${data.description}</p>
-        </div>
-
-        <div class="mb-6">
-          <h4 class="text-xs font-medium text-slate-400 uppercase tracking-widest mb-3">Key Facts</h4>
-          <ul class="space-y-2">
-            ${data.facts.map(f => `
-              <li class="flex items-start gap-2 text-sm text-slate-600">
-                <span class="w-1.5 h-1.5 rounded-full bg-sage-500 mt-1.5 shrink-0"></span>
-                ${f}
-              </li>
-            `).join('')}
-          </ul>
-        </div>
-
-        ${data.links.length > 0 ? `
-          <div>
-            <h4 class="text-xs font-medium text-slate-400 uppercase tracking-widest mb-3">Links</h4>
-            <div class="flex flex-wrap gap-2">
-              ${data.links.map(l => `
-                <a href="${l.url}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-sand rounded-full text-sm text-slate-600 hover:border-sage-500 hover:text-sage-600 transition-colors">
-                  ${l.label}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" x2="21" y1="14" y2="3"/>
-                  </svg>
-                </a>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-      `;
-
-      document.getElementById('modal-overlay').classList.add('active');
-      document.getElementById('modal-panel').classList.add('active');
-      document.body.style.overflow = 'hidden';
-
-      gsap.fromTo('#modal-panel',
-        { opacity: 0, scale: 0.95, y: 10 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: 'power2.out' }
-      );
     }
 
     // Language colors
@@ -930,21 +740,6 @@
         });
       });
 
-      // Award cards
-      gsap.utils.toArray('.award-card').forEach((card, i) => {
-        gsap.from(card, {
-          opacity: 0,
-          y: 20,
-          duration: 0.5,
-          ease: 'power2.out',
-          delay: i * 0.1,
-          scrollTrigger: {
-            trigger: '#awards',
-            start: 'top 85%'
-          }
-        });
-      });
-
       // Contact section
       gsap.from('.contact-content', {
         opacity: 0,
@@ -965,14 +760,6 @@
         item.addEventListener('click', () => {
           const experienceId = item.dataset.experience;
           openModal(experienceId);
-        });
-      });
-
-      // Award click handlers
-      document.querySelectorAll('.award-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const awardId = card.dataset.award;
-          openAwardModal(awardId);
         });
       });
 
