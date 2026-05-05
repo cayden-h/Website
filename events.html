@@ -228,9 +228,28 @@
     </div>
   </section>
 
+  <!-- Upcoming CTA -->
+  <section class="px-6 pb-12 upcoming-cta">
+    <div class="max-w-4xl mx-auto">
+      <a href="upcoming.html" class="block group bg-white/60 border border-sand/60 rounded-xl p-6 hover:border-sage-500 hover:shadow-[0_10px_40px_-10px_rgba(88,129,87,0.2)] transition-all">
+        <div class="flex items-center justify-between gap-6">
+          <div class="min-w-0">
+            <span class="text-xs font-medium text-sage-500 uppercase tracking-wider">Looking ahead</span>
+            <h3 class="text-xl font-medium text-slate-900 mt-2">Upcoming Programs &amp; Competitions</h3>
+            <p class="text-sm text-slate-500 mt-1">SWE internships, fellowships, and case competitions I'm tracking — searchable, filterable, with deadlines and links.</p>
+          </div>
+          <svg class="w-5 h-5 text-slate-300 group-hover:text-sage-500 group-hover:translate-x-1 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+    </div>
+  </section>
+
   <!-- Events Grid -->
   <section class="px-6 pb-24">
     <div class="max-w-4xl mx-auto">
+      <h2 class="text-xs font-medium text-slate-400 tracking-widest uppercase mb-6">Past</h2>
       <div id="events-grid" class="grid md:grid-cols-2 gap-6">
         <!-- Events will be populated by JS -->
       </div>
@@ -535,6 +554,13 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      gsap.from('.upcoming-cta', {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        ease: 'power2.out'
+      });
+
       renderEvents();
 
       document.getElementById('events-grid').addEventListener('click', (e) => {
