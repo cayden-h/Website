@@ -95,7 +95,6 @@
     /* Horizontal Timeline */
     .timeline-h {
       position: relative;
-      display: flex;
       overflow-x: auto;
       padding: 20px 0 40px 0;
       gap: 0;
@@ -105,7 +104,13 @@
     .timeline-h::-webkit-scrollbar {
       display: none;
     }
-    .timeline-h::before {
+    .timeline-track {
+      display: flex;
+      position: relative;
+      min-width: 100%;
+      width: max-content;
+    }
+    .timeline-track::before {
       content: '';
       position: absolute;
       top: 50px;
@@ -334,36 +339,54 @@
       <h2 class="text-xs font-medium text-slate-400 tracking-widest uppercase mb-6 text-center section-title">Experience</h2>
 
       <div class="timeline-h">
-        <div class="timeline-item-h" data-experience="bfi">
-          <div class="timeline-date">Jan 2026 - Present</div>
-          <div class="timeline-dot-h"></div>
-          <div class="timeline-role">Software Engineer Intern</div>
-          <div class="timeline-company">Better Futures Institute</div>
-          <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
-        </div>
+        <div class="timeline-track">
+          <div class="timeline-item-h" data-experience="mitre">
+            <div class="timeline-date">June 2026 - Present</div>
+            <div class="timeline-dot-h"></div>
+            <div class="timeline-role">Systems Engineer Intern</div>
+            <div class="timeline-company">MITRE</div>
+            <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
+          </div>
 
-        <div class="timeline-item-h" data-experience="mda">
-          <div class="timeline-date">Dec 2025 - Present</div>
-          <div class="timeline-dot-h"></div>
-          <div class="timeline-role">AI/ML Research Intern</div>
-          <div class="timeline-company">MD Anderson Cancer Center</div>
-          <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
-        </div>
+          <div class="timeline-item-h" data-experience="pumps_swe">
+            <div class="timeline-date">May 2026 - Present</div>
+            <div class="timeline-dot-h"></div>
+            <div class="timeline-role">Software Engineer Intern</div>
+            <div class="timeline-company">Pumps of Houston</div>
+            <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
+          </div>
 
-        <div class="timeline-item-h" data-experience="utsa">
-          <div class="timeline-date">Oct 2025 - Present</div>
-          <div class="timeline-dot-h"></div>
-          <div class="timeline-role">AI/ML Research Assistant</div>
-          <div class="timeline-company">UT San Antonio</div>
-          <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
-        </div>
+          <div class="timeline-item-h" data-experience="utsa">
+            <div class="timeline-date">Oct 2025 - Present</div>
+            <div class="timeline-dot-h"></div>
+            <div class="timeline-role">AI/ML Research Assistant</div>
+            <div class="timeline-company">UT San Antonio</div>
+            <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
+          </div>
 
-        <div class="timeline-item-h" data-experience="pumps">
-          <div class="timeline-date">May - Aug 2025</div>
-          <div class="timeline-dot-h"></div>
-          <div class="timeline-role">IT Support Intern</div>
-          <div class="timeline-company">Pumps of Houston</div>
-          <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
+          <div class="timeline-item-h" data-experience="bfi">
+            <div class="timeline-date">Jan - May 2026</div>
+            <div class="timeline-dot-h"></div>
+            <div class="timeline-role">Software Engineer Intern</div>
+            <div class="timeline-company">Better Futures Institute</div>
+            <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
+          </div>
+
+          <div class="timeline-item-h" data-experience="mda">
+            <div class="timeline-date">Dec 2025 - May 2026</div>
+            <div class="timeline-dot-h"></div>
+            <div class="timeline-role">AI/ML Research Intern</div>
+            <div class="timeline-company">MD Anderson Cancer Center</div>
+            <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
+          </div>
+
+          <div class="timeline-item-h" data-experience="pumps">
+            <div class="timeline-date">May - Aug 2025</div>
+            <div class="timeline-dot-h"></div>
+            <div class="timeline-role">IT Support Intern</div>
+            <div class="timeline-company">Pumps of Houston</div>
+            <div class="arrow-hint text-xs text-sage-500 mt-2">click to view</div>
+          </div>
         </div>
       </div>
     </div>
@@ -432,6 +455,26 @@
   <script>
     // Experience data
     const experienceData = {
+      mitre: {
+        role: 'Systems Engineer Intern',
+        company: 'MITRE',
+        location: '',
+        date: 'June 2026 - Present',
+        mission: 'Incoming 2026',
+        highlights: [],
+        metrics: [],
+        tech: []
+      },
+      pumps_swe: {
+        role: 'Software Engineer Intern',
+        company: 'Pumps of Houston',
+        location: 'Houston, Texas',
+        date: 'May 2026 - Present',
+        mission: 'Incoming 2026. <br><br> <a href="#" onclick="openModal(\'pumps\'); return false;" class="text-sage-500 hover:text-sage-600 underline">View previous IT Support Intern position</a>',
+        highlights: [],
+        metrics: [],
+        tech: []
+      },
       mda_future: {
         role: 'Incoming',
         company: 'MD Anderson Cancer Center',
@@ -468,7 +511,7 @@
         role: 'Software Engineer Intern',
         company: 'Better Futures Institute',
         location: 'San Antonio, Texas',
-        date: 'January 2026 - Present',
+        date: 'January 2026 - May 2026',
         mission: 'Developing AI solutions for public infrastructure to expand services for San Antonio residents.',
         highlights: [
           'Developed AI solutions for public infrastructure on a 15-person team',
@@ -488,7 +531,7 @@
         role: 'AI/ML Research Intern',
         company: 'MD Anderson Cancer Center',
         location: 'Houston, Texas',
-        date: 'December 2025 - Present',
+        date: 'December 2025 - May 2026',
         mission: 'Building ML imaging pipelines to improve cancer detection and diagnosis accuracy.',
         highlights: [
           'Built ML imaging pipelines for Head & Neck cancer detection (100GB+ datasets)',
@@ -530,7 +573,7 @@
         company: 'Pumps of Houston',
         location: 'Houston, Texas',
         date: 'May - August 2025',
-        mission: 'Managing IT infrastructure and providing technical support across the organization.',
+        mission: 'Managing IT infrastructure and providing technical support across the organization. <br><br> <a href="#" onclick="openModal(\'pumps_swe\'); return false;" class="text-sage-500 hover:text-sage-600 underline">View current Software Engineer Intern position</a>',
         highlights: [
           'Administered 60+ user accounts, roles, and permissions in Active Directory',
           'Maintained 0 security casualties throughout tenure',
