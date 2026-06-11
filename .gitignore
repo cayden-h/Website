@@ -1,0 +1,4 @@
+# Raw event media (multi-GB originals; web-optimized copies live in assets/events/)
+Events/
+
+.DS_Store
