@@ -144,6 +144,26 @@
       font-weight: 500;
     }
 
+    /* Sort-by-deadline toggle (distinct from category chips) */
+    .sortbtn {
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(232, 228, 222, 0.8);
+      background: rgba(255, 255, 255, 0.5);
+      color: #64748b;
+      transition: all 0.2s ease;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+    .sortbtn:hover { border-color: #a3b18a; color: #3a5a40; }
+    .sortbtn.on {
+      background: #588157;
+      border-color: #588157;
+      color: #fff;
+      font-weight: 500;
+    }
+
     /* Section header */
     .sec {
       font-size: 11px;
@@ -381,7 +401,13 @@
           <button class="cat" onclick="setCat('fin',this)">Finance-adjacent</button>
           <button class="cat" onclick="setCat('div',this)">Diversity programs</button>
         </div>
-        <span id="cnt" class="text-xs text-slate-400 tracking-wider">— programs</span>
+        <div class="flex items-center gap-3">
+          <div class="flex gap-2">
+            <button class="sortbtn" onclick="setSort('open',this)" title="Order by when applications open, soonest first — apply early">⏱ By open date</button>
+            <button class="sortbtn" onclick="setSort('dl',this)" title="Order by application deadline, soonest first">⏱ By deadline</button>
+          </div>
+          <span id="cnt" class="text-xs text-slate-400 tracking-wider">— programs</span>
+        </div>
       </div>
     </div>
   </section>
@@ -571,13 +597,25 @@
       {n:"HackSC",o:"University of Southern California · Los Angeles, CA · 36-hour hackathon",c:"hack",col:"#990000",fly:0,paid:0,div:0,self:1,fin:0,dl:"~Feb 2027",open:"~Jan 2027",pay:"~$20,000 in prizes",loc:"Los Angeles, CA",desc:"USC's main coed 36-hour hackathon every spring. ~800 hackers from across Southern California. Sponsor mix includes entertainment tech (Spotify, Disney tech, Riot Games, Sony), media, and major Bay Area tech firms recruiting from USC's large CS program.",why:"Entertainment and media-tech sponsors (Disney, Spotify, Riot Games) are only concentrated at USC-area hackathons — strong differentiator for students interested in game dev, streaming, or entertainment engineering.",link:"https://hacksc.com/"},
     ];
 
-    let cat = 'all', q = '', openI = null;
+    let cat = 'all', q = '', openI = null, sortMode = ''; // '' | 'open' | 'dl'
 
     function setCat(c, btn) {
       cat = c;
       openI = null;
       document.querySelectorAll('.cat').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
+      render();
+    }
+
+    // Toggle a date-ordered view. Works alongside the active category/search:
+    // re-groups the filtered list by month (soonest → furthest) instead of by section.
+    // 'open' sorts by when applications open (be first to apply); 'dl' by deadline.
+    // Clicking the active mode again returns to the default category view.
+    function setSort(mode, btn) {
+      sortMode = (sortMode === mode) ? '' : mode;
+      openI = null;
+      document.querySelectorAll('.sortbtn').forEach(b => b.classList.remove('on'));
+      if (sortMode) btn.classList.add('on');
       render();
     }
 
@@ -652,71 +690,133 @@
       }[m]));
     }
 
+    // Parse a freeform date string — `dl` or `open` (e.g. "~Oct 2026", "~Jan–Feb 2027",
+    // "~Spring 2027", "Rolling (Spring 2027)") into a sortable key = year*12 + month.
+    // Seasons map to a representative month (spring→Mar, summer→Jun, fall→Sep, winter→Dec).
+    // When several dates appear (multi-cycle entries), the earliest wins — that's the
+    // soonest moment to act on. No parseable month/year → Infinity (Rolling bucket).
+    const MONTH_IDX = {
+      january: 0, jan: 0, february: 1, feb: 1, march: 2, mar: 2, april: 3, apr: 3,
+      may: 4, june: 5, jun: 5, july: 6, jul: 6, august: 7, aug: 7,
+      september: 8, sept: 8, sep: 8, october: 9, oct: 9, november: 10, nov: 10,
+      december: 11, dec: 11, spring: 2, summer: 5, fall: 8, autumn: 8, winter: 11
+    };
+    const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+    const MONTH_RE = /\b(january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec|spring|summer|fall|autumn|winter)\b/g;
+
+    function dateKey(str) {
+      const s = String(str).toLowerCase();
+      let m, best = Infinity, bareMonth = null;
+      MONTH_RE.lastIndex = 0;
+      while ((m = MONTH_RE.exec(s))) {
+        const mo = MONTH_IDX[m[1]];
+        const yr = s.slice(m.index).match(/(20\d{2})/);
+        if (yr) {
+          const key = parseInt(yr[1], 10) * 12 + mo;
+          if (key < best) best = key;
+        } else if (bareMonth === null) {
+          bareMonth = mo; // month named with no year — resolve below
+        }
+      }
+      // A month with no year (e.g. "Oct 6–19") → its next upcoming occurrence.
+      if (best === Infinity && bareMonth !== null) {
+        const now = new Date();
+        const nowKey = now.getFullYear() * 12 + now.getMonth();
+        best = now.getFullYear() * 12 + bareMonth;
+        if (best < nowKey) best += 12;
+      }
+      return best;
+    }
+
+    function monthLabel(key) {
+      if (key === Infinity) return 'Rolling / ongoing';
+      return MONTH_NAMES[key % 12] + ' ' + Math.floor(key / 12);
+    }
+
+    function rowHtml(p, idx) {
+      const isO = openI === idx;
+      const tags = [
+        p.fly ? '<span class="t t-fly">✈ travel funded</span>' : '',
+        p.paid ? '<span class="t t-paid">paid</span>' : '',
+        p.div ? '<span class="t t-div">diversity program</span>' : '',
+        p.fin ? '<span class="t t-fin">finance-adjacent</span>' : '',
+        p.self ? '<span class="t t-self">self-funded</span>' : '',
+        p.c === 'case' ? '<span class="t t-comp">competition</span>' : '',
+        p.c === 'hack' ? '<span class="t t-hack">hackathon</span>' : ''
+      ].filter(Boolean).join('');
+
+      return `<div class="row${isO ? ' open' : ''}" data-idx="${idx}" onclick="toggle(${idx})">
+        <div class="dot" style="background:${p.col}"></div>
+        <div class="min-w-0">
+          <div class="rname">${escapeHtml(p.n)}</div>
+          <div class="rorg">${escapeHtml(p.o)}</div>
+          <div class="tags">${tags}</div>
+        </div>
+        <div class="meta">
+          <div class="dl">${escapeHtml(p.dl)}</div>
+          ${p.pay ? `<div class="pay-note">${escapeHtml(p.pay)}</div>` : ''}
+          <div class="chv">▾</div>
+        </div>
+        <div class="detail${isO ? ' show' : ''}">
+          <div class="dg">
+            <div class="di"><strong>Opens</strong><span>${escapeHtml(p.open)}</span></div>
+            <div class="di"><strong>Deadline</strong><span>${escapeHtml(p.dl)}</span></div>
+            <div class="di"><strong>Pay / Prize</strong><span>${escapeHtml(p.pay || 'See link')}</span></div>
+            <div class="di"><strong>Location</strong><span>${escapeHtml(p.loc)}</span></div>
+          </div>
+          <div class="desc">${escapeHtml(p.desc)}</div>
+          <div class="why"><strong>Why it matters:</strong> ${escapeHtml(p.why)}</div>
+          <div class="btns">
+            <a class="apply-btn" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+              Apply / Learn more
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>`;
+    }
+
     function render() {
       const filtered = P.filter(pass);
       document.getElementById('cnt').textContent = filtered.length + ' programs';
 
-      const grps = { swe_paid: [], swe_other: [], hack_main: [], case_fly: [], case_self: [] };
-      filtered.forEach(p => {
-        const idx = P.indexOf(p);
-        if (p.c === 'hack') grps.hack_main.push({ p, idx });
-        else if (p.c === 'swe' && p.paid) grps.swe_paid.push({ p, idx });
-        else if (p.c === 'swe') grps.swe_other.push({ p, idx });
-        else if (p.c === 'case' && (p.fly || !p.self)) grps.case_fly.push({ p, idx });
-        else grps.case_self.push({ p, idx });
-      });
-
       let html = '';
       if (!filtered.length) {
         html = '<div class="empty">No programs match. Try a different filter or search.</div>';
+      } else if (sortMode) {
+        // Date-ordered view: bucket by month, soonest first, Rolling last.
+        // sortMode 'open' sorts by application-open month, 'dl' by deadline month.
+        const field = sortMode === 'open' ? 'open' : 'dl';
+        const lead = sortMode === 'open' ? 'Opens' : 'Deadline';
+        const buckets = new Map();
+        filtered.forEach(p => {
+          const k = dateKey(p[field]);
+          if (!buckets.has(k)) buckets.set(k, []);
+          buckets.get(k).push({ p, idx: P.indexOf(p) });
+        });
+        [...buckets.keys()].sort((a, b) => a - b).forEach(k => {
+          const list = buckets.get(k);
+          html += `<div class="sec">${lead} ${monthLabel(k)} <span class="text-slate-300">·</span> ${list.length}</div>`;
+          list.forEach(({ p, idx }) => { html += rowHtml(p, idx); });
+        });
       } else {
+        // Default view: grouped by category section.
+        const grps = { swe_paid: [], swe_other: [], hack_main: [], case_fly: [], case_self: [] };
+        filtered.forEach(p => {
+          const idx = P.indexOf(p);
+          if (p.c === 'hack') grps.hack_main.push({ p, idx });
+          else if (p.c === 'swe' && p.paid) grps.swe_paid.push({ p, idx });
+          else if (p.c === 'swe') grps.swe_other.push({ p, idx });
+          else if (p.c === 'case' && (p.fly || !p.self)) grps.case_fly.push({ p, idx });
+          else grps.case_self.push({ p, idx });
+        });
         Object.entries(grps).forEach(([key, list]) => {
           if (!list.length) return;
           html += `<div class="sec">${SECS[key]} <span class="text-slate-300">·</span> ${list.length}</div>`;
-          list.forEach(({ p, idx }) => {
-            const isO = openI === idx;
-            const tags = [
-              p.fly ? '<span class="t t-fly">✈ travel funded</span>' : '',
-              p.paid ? '<span class="t t-paid">paid</span>' : '',
-              p.div ? '<span class="t t-div">diversity program</span>' : '',
-              p.fin ? '<span class="t t-fin">finance-adjacent</span>' : '',
-              p.self ? '<span class="t t-self">self-funded</span>' : '',
-              p.c === 'case' ? '<span class="t t-comp">competition</span>' : '',
-              p.c === 'hack' ? '<span class="t t-hack">hackathon</span>' : ''
-            ].filter(Boolean).join('');
-
-            html += `<div class="row${isO ? ' open' : ''}" data-idx="${idx}" onclick="toggle(${idx})">
-              <div class="dot" style="background:${p.col}"></div>
-              <div class="min-w-0">
-                <div class="rname">${escapeHtml(p.n)}</div>
-                <div class="rorg">${escapeHtml(p.o)}</div>
-                <div class="tags">${tags}</div>
-              </div>
-              <div class="meta">
-                <div class="dl">${escapeHtml(p.dl)}</div>
-                ${p.pay ? `<div class="pay-note">${escapeHtml(p.pay)}</div>` : ''}
-                <div class="chv">▾</div>
-              </div>
-              <div class="detail${isO ? ' show' : ''}">
-                <div class="dg">
-                  <div class="di"><strong>Opens</strong><span>${escapeHtml(p.open)}</span></div>
-                  <div class="di"><strong>Deadline</strong><span>${escapeHtml(p.dl)}</span></div>
-                  <div class="di"><strong>Pay / Prize</strong><span>${escapeHtml(p.pay || 'See link')}</span></div>
-                  <div class="di"><strong>Location</strong><span>${escapeHtml(p.loc)}</span></div>
-                </div>
-                <div class="desc">${escapeHtml(p.desc)}</div>
-                <div class="why"><strong>Why it matters:</strong> ${escapeHtml(p.why)}</div>
-                <div class="btns">
-                  <a class="apply-btn" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-                    Apply / Learn more
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <path d="M9 5l7 7-7 7"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>`;
-          });
+          list.forEach(({ p, idx }) => { html += rowHtml(p, idx); });
         });
       }
       document.getElementById('list').innerHTML = html;
