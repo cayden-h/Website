@@ -13,7 +13,7 @@ To preview locally, open the `.html` files directly in a browser, or run a stati
 - `index.html` — landing page. Hero, experience timeline (click-to-open modal), publications placeholder, projects list (fetched live from GitHub), contact.
 - `project.html` — per-repo detail page. Reads `?name=<repo>` from the URL and calls the GitHub API for that repo's metadata + README. There is no router; `index.html` links here directly.
 - `events.html` — hackathons / datathons / conferences (past events), presented as a Three.js spherical gallery: the viewer sits inside a sphere tiled with event cards (the events repeat to fill it). Drag/wheel to look around, tap a card to open a full-screen detail view. A "Looking ahead" HUD pill links to `upcoming.html`.
-- `upcoming.html` — searchable database of forward-looking opportunities: sophomore-only programs, hackathons, and case competitions (~120 entries). Search bar + category chips at top, two mutually-exclusive date-sort toggles ("By open date" / "By deadline") on the right, click-to-expand inline detail panels.
+- `upcoming.html` — searchable database of forward-looking opportunities: sophomore-only programs, hackathons, and case competitions (~240 entries). Search bar + category chips at top, two mutually-exclusive date-sort toggles ("By open date" / "By deadline") on the right, click-to-expand inline detail panels. Every row shows a date-provenance badge (confirmed / estimated / discontinued) under its deadline.
 
 ## Architecture conventions
 
@@ -26,7 +26,7 @@ To preview locally, open the `.html` files directly in a browser, or run a stati
 **Data lives in the page that renders it:**
 - Experience modal content → `experienceData` object in `index.html` (keys match `data-experience` attributes on timeline items).
 - Events → `events` object in `events.html`. Each entry's `photos` array points to web-optimized images in `assets/events/<key>/` (first photo = sphere card hero + detail hero; the rest fill the detail-page gallery). Raw originals live in the gitignored `Events/` folder; to add a photo run `sips -s format jpeg -s formatOptions 75 --resampleHeightWidthMax 1080 <src> --out assets/events/<key>/<name>.jpg` (sips drops EXIF rotation — check portrait shots and fix with `sips -r 90/180/270`).
-- Upcoming opportunities → `P` array in `upcoming.html`. Terse-key schema: `n` (name), `o` (org · location · duration), `c` (`"swe"` for sophomore programs / `"case"` for case competitions / `"hack"` for hackathons), `col` (brand hex), boolean flags `fly` `paid` `div` `self` `fin`, plus `dl` `open` `pay` `loc` `desc` `why` `link`. The filter/render logic depends on these exact fields, and rows are bucketed into the `SECS` sections by `c` + flags. When adding entries, append at the end — source order doesn't affect grouping. Strings get HTML-escaped at render time, so write `&` (not `&amp;`) in the data.
+- Upcoming opportunities → `P` array in `upcoming.html`. Terse-key schema: `n` (name), `o` (org · location · duration), `c` (`"swe"` for sophomore programs / `"case"` for case competitions / `"hack"` for hackathons), `col` (brand hex), boolean flags `fly` `paid` `div` `self` `fin`, plus `dl` `open` `pay` `loc` `desc` `why` `link`, and the provenance pair `v` + `vs` (see below). The filter/render logic depends on these exact fields, and rows are bucketed into the `SECS` sections by `c` + flags. When adding entries, append at the end — source order doesn't affect grouping. Strings get HTML-escaped at render time, so write `&` (not `&amp;`) in the data.
 
 **Projects list is dynamic.** `index.html` calls `https://api.github.com/users/cayden-h/repos` and filters out forks, the `Website` repo itself, and any repo name containing `neetcode`. To exclude another repo, add it to that filter (around `index.html:650`). The `GITHUB_USERNAME` constant is defined just above the fetch.
 
@@ -38,7 +38,23 @@ To preview locally, open the `.html` files directly in a browser, or run a stati
 
 **`upcoming.html` toggle is DOM-mutating, not re-rendering.** `toggle(i)` finds the row by `data-idx` and animates the `.detail` panel open/closed in place; only `setCat`, `doSearch`, and `setSort` call `render()` (which rewrites `innerHTML` and re-runs the GSAP stagger). Do not regress this — making `toggle()` re-render replays the stagger on every click and feels broken.
 
+**`upcoming.html` entries carry date provenance, and it is not decorative.**
+Most programs on this page have not published their next cycle's dates, so the array mixes sourced facts with inferences.
+The `v` field records which is which and `verifyBadge()` renders it under the deadline: `v:1` = confirmed, a date actually read off an official or authoritative page, with `vs` holding a short source label shown in the badge (e.g. `vs:"federalreserve.gov"`); `v:0` = estimated, inferred from prior-cycle timing and not confirmed for the coming cycle; `v:2` = discontinued, covering dead programs, retired names, and eligibility mismatches (grad-only, high-school-only).
+Every entry must have a `v`, and every `v:1` must have a `vs` — a confirmed badge with no source defeats the point.
+
+**Rules for researching `upcoming.html` data.**
+These exist because earlier passes got them wrong, so treat them as hard constraints rather than style preferences:
+- **A missing job posting is not evidence a program is dead.** These programs are off-cycle for most of the year, so checking whether a listing is live right now is misleading. Research when the program opened in previous cycles and store that as an explicit `v:0` estimate instead.
+- **`v:2` requires positive evidence** — an explicit statement from the organisation, a domain that fails DNS, or an eligibility rule that excludes undergrads. Never infer it from silence.
+- **Only compensated opportunities belong here.** Exclude unpaid programs and anything the student pays for. Exceptions: summits and insight events that compensate via flights, accommodation or goods; unpaid bank insight programs (they are the documented early-ID pipeline); and hackathons (free entry, food, swag and prize pools count).
+- **Verify agent research before committing it.** Subagent reports have been wrong in both directions on this page — fabricated dates presented as sourced, and confident retractions of claims that were actually correct. Check any high-impact claim against the page yourself.
+- **Program names are a common failure mode.** Whole clusters of plausible-sounding entries ("Sophomore Insight Day" at various banks) turned out not to exist. If a firm's own student page enumerates its programs and the name is absent, that is positive evidence the name is wrong — unlike a missing posting.
+
 **`upcoming.html` date sorting reuses one parser across two views.** `setSort(mode, btn)` toggles `sortMode` between `''` (default category grouping via `SECS`), `'open'`, and `'dl'`; the two modes are mutually exclusive and clicking the active one returns to category view. When a sort mode is on, `render()` buckets the filtered list by month and orders soonest→furthest, using `dateKey()` to parse the freeform `open`/`dl` strings (e.g. `~Oct 2026`, `~Jan–Feb 2027`, `~Spring 2027`, `Aug 2026 / Mar 2027`) into a sortable `year*12 + month`. Rules: seasons map to a representative month (spring→Mar, summer→Jun, fall→Sep, winter→Dec); multi-date entries take the earliest; a month with no year resolves to its next upcoming occurrence relative to today; anything with no parseable month lands in a "Rolling / ongoing" bucket pinned last. Sort works alongside the active category/search filter.
+Status strings deliberately fall into that last bucket too (`Rolling / closes when filled`, `Program discontinued`, `Not open to college students`), which is why they are safe to use in `dl`/`open`.
+Beware the inverse: any month name anywhere in the string is parsed, so a status string that happens to contain one (`"closed since March"`) will sort into that month.
+Two shapes worth copying — `OPEN NOW (~July 2026)` surfaces live opportunities while still sorting correctly, and a hard date is written plainly as `Sept 30, 2026 (5pm ET)`.
 
 ## Deployment
 
